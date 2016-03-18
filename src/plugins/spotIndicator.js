@@ -16,13 +16,16 @@ const defaultOptions = {
 const lastPriceFromSeries = series =>
     series.yData.length && series.yData[series.yData.length - 1];
 
-const polyPath = (x, y, width, height) => [
+const leftPadding = currentPrice => 
+    (Math.floor(currentPrice).toString().length - 3) * 8 || 3;    
+
+const polyPath = (x, y, width, height, currentPrice) => [
     'M', 0, y - .5,
     'L',
     x - 8, y,
     x, y - (height / 2),
-    x + width, y - (height / 2),
-    x + width, y + (height / 2),
+    x + width + leftPadding(currentPrice), y - (height / 2),
+    x + width + leftPadding(currentPrice), y + (height / 2),
     x, y + (height / 2),
     x - 8, y + .5,
     0, y + .5,
@@ -35,7 +38,7 @@ const initialize = ({ renderer, options, currentPrice, x, y, spotIndicator, pric
         .add();
 
     spotIndicator.poly = renderer
-        .path(polyPath(priceYAxis.width, y, 60, 15))
+        .path(polyPath(priceYAxis.width, y, 60, 15, currentPrice))
         .attr({
             fill: options.color,
         })
@@ -45,6 +48,7 @@ const initialize = ({ renderer, options, currentPrice, x, y, spotIndicator, pric
         .label(currentPrice.toFixed(2), priceYAxis.width + 45, y - 8)
         .attr({
             padding: 1,
+            paddingLeft: leftPadding(currentPrice),
         })
         .css({
             cursor: 'default',
@@ -59,12 +63,13 @@ const update = ({ currentPrice, x, y, spotIndicator, priceYAxis }) => {
 
     spotIndicator.label.attr({
         text: currentPrice.toFixed(2),
+        paddingLeft: leftPadding(currentPrice),
         x: priceYAxis.width + 45,
         y: y - 8
     });
 
     spotIndicator.poly.attr({
-        d: polyPath(priceYAxis.width, y, 60, 15)
+        d: polyPath(priceYAxis.width, y, 60, 15, currentPrice)
     });
 
     const extremes = priceYAxis.getExtremes();
