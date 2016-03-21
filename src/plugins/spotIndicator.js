@@ -8,8 +8,6 @@ const defaultOptions = {
         color: 'white',
         fontSize: '11px',
     },
-    x: 0,
-    y: 0,
     zIndex: 100
 };
 
@@ -45,7 +43,7 @@ const initialize = ({ renderer, options, currentPrice, x, y, spotIndicator, pric
         .add(spotIndicator.group);
 
     spotIndicator.label = renderer
-        .label(currentPrice.toFixed(2), priceYAxis.width + 45, y - 8)
+        .label(currentPrice.toFixed(2), priceYAxis.width + x, y - 8)
         .attr({
             padding: 1,
             paddingLeft: leftPadding(currentPrice),
@@ -104,11 +102,8 @@ export default () => {
 
         const width = 40;
 
-        let x = priceYAxis.opposite ? chart.chartWidth - width : marginLeft;
+        let x = chart.marginRight;
         let y = priceYAxis.toPixels(currentPrice);
-
-        x += options.x;
-        y += options.y;
 
         if (priceYAxis.spotIndicator) {
             update({ currentPrice, x, y, spotIndicator: priceYAxis.spotIndicator, priceYAxis });
